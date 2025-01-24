@@ -28,7 +28,7 @@ async fn main() -> eyre::Result<()> {
         info!("Bound to {}", sock);
         axum::serve(
             listener,
-            router().into_axum(&opts.suffix.unwrap_or_default()),
+            router().into_axum(&opts.suffix.unwrap_or("/".to_string())),
         )
         .await?;
     }
