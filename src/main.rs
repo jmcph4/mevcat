@@ -26,7 +26,11 @@ async fn main() -> eyre::Result<()> {
     if let Some(sock) = opts.listen {
         let listener = tokio::net::TcpListener::bind(sock).await?;
         info!("Bound to {}", sock);
-        axum::serve(listener, router().into_axum("/rpc")).await?;
+        axum::serve(
+            listener,
+            router().into_axum(&opts.suffix.unwrap_or_default()),
+        )
+        .await?;
     }
 
     Ok(())
