@@ -23,9 +23,11 @@ async fn main() -> eyre::Result<()> {
     pretty_env_logger::init_timed();
     let opts = Opts::parse();
 
-    let listener = tokio::net::TcpListener::bind(opts.address).await?;
-    info!("Bound to {}", opts.address);
-    axum::serve(listener, router().into_axum("/rpc")).await?;
+    if let Some(sock) = opts.listen {
+        let listener = tokio::net::TcpListener::bind(sock).await?;
+        info!("Bound to {}", sock);
+        axum::serve(listener, router().into_axum("/rpc")).await?;
+    }
 
     Ok(())
 }
