@@ -1,10 +1,12 @@
 [package]
-name = "bundled"
+name = "bundlecat"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 ajj = "0.1.2"
+alloy-primitives = "0.8.19"
+alloy-rpc-types-mev = "0.9.2"
 axum = "0.8.1"
 clap = { version = "4.5.27", features = ["derive"] }
 eyre = "0.6.12"
