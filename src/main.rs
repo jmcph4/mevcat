@@ -2,7 +2,9 @@ use std::{fmt::Display, str::FromStr};
 
 use ajj::Router;
 use alloy_primitives::FixedBytes;
-use alloy_rpc_types_mev::{CancelBundleRequest, EthBundleHash, EthSendBundle};
+use alloy_rpc_types_mev::{
+    CancelBundleRequest, EthBundleHash, EthCallBundle, EthSendBundle,
+};
 
 use clap::Parser;
 use log::info;
@@ -84,6 +86,13 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
             format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_cancelBundle\",\"params\":[{}]}}",
                 serde_json::to_string(&cancel).unwrap(),
+            )
+        }
+        Method::CallBundle => {
+            let bundle: EthCallBundle = serde_json::from_str(buf.as_str())?;
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_callBundle\",\"params\":[{}]}}",
+                serde_json::to_string(&bundle).unwrap(),
             )
         }
         _ => "".to_string(),
