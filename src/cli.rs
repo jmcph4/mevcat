@@ -24,4 +24,7 @@ pub struct Opts {
     /// RPC verb to use (client-mode only)
     #[clap(long, short, action)]
     pub method: Option<Method>,
+    /// Send standard input to the remote host
+    #[clap(long, short, action)]
+    pub raw: bool,
 }

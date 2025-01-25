@@ -73,52 +73,56 @@ impl FromStr for Method {
 pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
     let mut buf = String::new();
     std::io::stdin().read_line(&mut buf)?;
-    let req = match opts.method.unwrap_or_default() {
-        Method::SendBundle => {
-            let bundle: EthSendBundle = serde_json::from_str(buf.as_str())?;
-            format!(
+    let req = if opts.raw {
+        buf
+    } else {
+        match opts.method.unwrap_or_default() {
+            Method::SendBundle => {
+                let bundle: EthSendBundle = serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendBundle\",\"params\":[{}]}}",
                 serde_json::to_string(&bundle).unwrap(),
             )
-        }
-        Method::CancelBundle => {
-            let cancel: CancelBundleRequest =
-                serde_json::from_str(buf.as_str())?;
-            format!(
+            }
+            Method::CancelBundle => {
+                let cancel: CancelBundleRequest =
+                    serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_cancelBundle\",\"params\":[{}]}}",
                 serde_json::to_string(&cancel).unwrap(),
             )
-        }
-        Method::CallBundle => {
-            let bundle: EthCallBundle = serde_json::from_str(buf.as_str())?;
-            format!(
+            }
+            Method::CallBundle => {
+                let bundle: EthCallBundle = serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_callBundle\",\"params\":[{}]}}",
                 serde_json::to_string(&bundle).unwrap(),
             )
-        }
-        Method::SendPrivateTransaction => {
-            let tx: PrivateTransactionRequest =
-                serde_json::from_str(buf.as_str())?;
-            format!(
+            }
+            Method::SendPrivateTransaction => {
+                let tx: PrivateTransactionRequest =
+                    serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateTransaction\",\"params\":[{}]}}",
                 serde_json::to_string(&tx).unwrap(),
             )
-        }
-        Method::CancelPrivateTransaction => {
-            let cancel: CancelPrivateTransactionRequest =
-                serde_json::from_str(buf.as_str())?;
-            format!(
+            }
+            Method::CancelPrivateTransaction => {
+                let cancel: CancelPrivateTransactionRequest =
+                    serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_cancelPrivateTransaction\",\"params\":[{}]}}",
                 serde_json::to_string(&cancel).unwrap(),
             )
-        }
-        Method::SendPrivateRawTransaction => {
-            let tx: PrivateTransactionRequest =
-                serde_json::from_str(buf.as_str())?;
-            format!(
+            }
+            Method::SendPrivateRawTransaction => {
+                let tx: PrivateTransactionRequest =
+                    serde_json::from_str(buf.as_str())?;
+                format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateRawTransaction\",\"params\":[{}]}}",
                 serde_json::to_string(&tx).unwrap(),
             )
+            }
         }
     };
 
