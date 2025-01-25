@@ -4,6 +4,7 @@ use ajj::Router;
 use alloy_primitives::FixedBytes;
 use alloy_rpc_types_mev::{
     CancelBundleRequest, EthBundleHash, EthCallBundle, EthSendBundle,
+    PrivateTransactionRequest,
 };
 
 use clap::Parser;
@@ -93,6 +94,14 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
             format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_callBundle\",\"params\":[{}]}}",
                 serde_json::to_string(&bundle).unwrap(),
+            )
+        }
+        Method::SendPrivateTransaction => {
+            let tx: PrivateTransactionRequest =
+                serde_json::from_str(buf.as_str())?;
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateTransaction\",\"params\":[{}]}}",
+                serde_json::to_string(&tx).unwrap(),
             )
         }
         _ => "".to_string(),
