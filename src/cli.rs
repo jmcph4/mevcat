@@ -3,6 +3,8 @@ use std::net::SocketAddr;
 use clap::Parser;
 use reqwest::Url;
 
+use crate::Method;
+
 /// Lightweight tool for interacting with MEV APIs
 #[derive(Clone, Debug, Parser)]
 #[clap(author, version, about)]
@@ -18,4 +20,6 @@ pub struct Opts {
     pub suffix: Option<String>,
     #[clap(required_unless_present = "listen")]
     pub endpoint: Option<Url>,
+    #[clap(long, short, action)]
+    pub method: Option<Method>,
 }
