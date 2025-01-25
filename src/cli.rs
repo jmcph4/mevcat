@@ -19,7 +19,9 @@ pub struct Opts {
     #[clap(long, short)]
     pub suffix: Option<String>,
     #[clap(required_unless_present = "listen")]
+    /// Remote host to submit RPCs to
     pub endpoint: Option<Url>,
+    /// RPC verb to use (client-mode only)
     #[clap(long, short, action)]
     pub method: Option<Method>,
 }
