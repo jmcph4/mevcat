@@ -112,7 +112,14 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 serde_json::to_string(&cancel).unwrap(),
             )
         }
-        _ => "".to_string(),
+        Method::SendPrivateRawTransaction => {
+            let tx: PrivateTransactionRequest =
+                serde_json::from_str(buf.as_str())?;
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateRawTransaction\",\"params\":[{}]}}",
+                serde_json::to_string(&tx).unwrap(),
+            )
+        }
     };
 
     info!("Sending {}...", &req);
