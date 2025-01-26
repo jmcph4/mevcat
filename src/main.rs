@@ -10,6 +10,7 @@ use alloy_rpc_types_mev::{
 use clap::Parser;
 use log::info;
 use reqwest::Client;
+use serde_json::Value;
 
 use crate::cli::Opts;
 
@@ -135,7 +136,14 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
         .await?
         .text()
         .await?;
-    println!("{resp}");
+    if opts.raw {
+        println!("{resp}");
+    } else if let Some(res) = serde_json::from_str(&resp)
+        .ok()
+        .and_then(|v: Value| v.get("result").cloned())
+    {
+        println!("{res}");
+    }
     Ok(())
 }
 
