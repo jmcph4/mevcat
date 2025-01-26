@@ -74,6 +74,11 @@ impl FromStr for Method {
 pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
     let mut buf = String::new();
     std::io::stdin().read_line(&mut buf)?;
+
+    if buf.is_empty() {
+        return Ok(());
+    }
+
     let req = if opts.raw {
         buf
     } else {
