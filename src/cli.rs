@@ -13,7 +13,7 @@ pub struct Opts {
     #[clap(long, short, action)]
     pub listen: Option<SocketAddr>,
     ///Port number to use
-    #[clap(long, short)]
+    #[clap(long, short, conflicts_with = "listen")]
     pub port: Option<u16>,
     /// URL suffix to bind to
     #[clap(long, short)]
