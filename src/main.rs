@@ -4,7 +4,8 @@ use ajj::Router;
 use alloy_primitives::FixedBytes;
 use alloy_rpc_types_mev::{
     CancelBundleRequest, CancelPrivateTransactionRequest, EthBundleHash,
-    EthCallBundle, EthSendBundle, PrivateTransactionRequest,
+    EthCallBundle, EthCallBundleResponse, EthSendBundle,
+    PrivateTransactionRequest,
 };
 use clap::Parser;
 use log::{info, warn};
@@ -189,6 +190,12 @@ pub fn router() -> Router<()> {
                 Ok::<(), &'static str>(())
             },
         )
+        .route("eth_callBundle", |bundle: EthCallBundle| async move {
+            info!("Received bundle for simulation: {:?}", bundle);
+            let sim_resp: EthCallBundleResponse =
+                EthCallBundleResponse::default();
+            Ok::<EthCallBundleResponse, &'static str>(sim_resp)
+        })
 }
 
 #[tokio::main]
