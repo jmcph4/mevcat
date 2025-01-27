@@ -180,3 +180,60 @@ async fn main() -> eyre::Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::process::{Command, Stdio};
+
+    const BEAVERBUILD_URL: &str = "https://rpc.beaverbuild.org";
+    const LOCAL_SOCKET: &str = "0.0.0.0:3000";
+
+    #[test]
+    fn test_eof() {
+        let mut child = Command::new("target/debug/mevcat")
+            .arg(BEAVERBUILD_URL)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("Failed to start the program");
+
+        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+        let _ = stdin;
+
+        let output = child.wait().expect("Failed to wait on child");
+
+        assert!(output.success(), "Program did not exit with code 0");
+    }
+
+    #[test]
+    fn test_port_with_listen() {
+        let some_port: u16 = 8080;
+        let mut child = Command::new("target/debug/mevcat")
+            .arg("-l")
+            .arg(LOCAL_SOCKET)
+            .arg("-p")
+            .arg(some_port.to_string())
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("Failed to start the program");
+
+        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+        let _ = stdin;
+
+        let output = child.wait().expect("Failed to wait on child");
+
+        assert!(!output.success(), "Program should error");
+        assert!(
+            output.code().is_some(),
+            "Program should return an exit code"
+        );
+        assert_eq!(
+            output.code().unwrap(),
+            2,
+            "Program should return exit code 2"
+        );
+    }
+}
