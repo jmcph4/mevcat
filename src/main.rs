@@ -9,7 +9,7 @@ use alloy_rpc_types_mev::{
 
 use clap::Parser;
 use log::info;
-use reqwest::Client;
+use reqwest::{Client, Url};
 use serde_json::Value;
 
 use crate::cli::Opts;
@@ -138,9 +138,18 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
         }
     };
 
-    info!("Sending {}...", &req);
+    let url: Url = match opts.port {
+        Some(p) => {
+            let mut x = opts.endpoint.unwrap();
+            x.set_port(Some(p)).unwrap();
+            x
+        }
+        None => opts.endpoint.unwrap(),
+    };
+
+    info!("Sending {} to {}...", &req, &url);
     let resp: String = Client::new()
-        .post(opts.endpoint.unwrap())
+        .post(url)
         .header("Content-Type", "application/json")
         .body(req)
         .send()
