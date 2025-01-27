@@ -6,9 +6,8 @@ use alloy_rpc_types_mev::{
     CancelBundleRequest, CancelPrivateTransactionRequest, EthBundleHash,
     EthCallBundle, EthSendBundle, PrivateTransactionRequest,
 };
-
 use clap::Parser;
-use log::info;
+use log::{info, warn};
 use reqwest::{Client, Url};
 use serde_json::Value;
 
@@ -168,12 +167,20 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
 }
 
 pub fn router() -> Router<()> {
-    Router::new().route("eth_sendBundle", |bundle: EthSendBundle| async move {
-        info!("Received bundle: {:?}", bundle);
-        Ok::<EthBundleHash, ()>(EthBundleHash {
-            bundle_hash: FixedBytes::ZERO,
-        })
-    })
+    Router::new().route(
+        "eth_sendBundle",
+        |params: Vec<EthSendBundle>| async move {
+            if let Some(bundle) = params.first() {
+                info!("Received bundle: {:?}", bundle);
+                Ok::<EthBundleHash, &'static str>(EthBundleHash {
+                    bundle_hash: FixedBytes::ZERO,
+                })
+            } else {
+                warn!("Received eth_sendBundle with no bundles");
+                Err("Must specify exactly one bundle")
+            }
+        },
+    )
 }
 
 #[tokio::main]
