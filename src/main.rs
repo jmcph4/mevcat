@@ -167,9 +167,8 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
 }
 
 pub fn router() -> Router<()> {
-    Router::new().route(
-        "eth_sendBundle",
-        |params: Vec<EthSendBundle>| async move {
+    Router::new()
+        .route("eth_sendBundle", |params: Vec<EthSendBundle>| async move {
             if let Some(bundle) = params.first() {
                 info!("Received bundle: {:?}", bundle);
                 Ok::<EthBundleHash, &'static str>(EthBundleHash {
@@ -179,8 +178,17 @@ pub fn router() -> Router<()> {
                 warn!("Received eth_sendBundle with no bundles");
                 Err("Must specify exactly one bundle")
             }
-        },
-    )
+        })
+        .route(
+            "eth_cancelBundle",
+            |cancel: CancelBundleRequest| async move {
+                info!(
+                    "Received cancellation for bundle: {}",
+                    cancel.bundle_hash
+                );
+                Ok::<(), &'static str>(())
+            },
+        )
 }
 
 #[tokio::main]
