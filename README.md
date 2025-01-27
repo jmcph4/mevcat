@@ -38,10 +38,16 @@ When operating in client mode, `mevcat` accepts a JSON RPC payload from standard
 ```
 $ mevcat https://rpc.beaverbuild.org
 {"txs":["0x02f8b20181948449bdee618501dcd6500083016b93942dabcea55a12d73191aece59f508b191fb68adac80b844095ea7b300000000000000000000000054e44dbb92dba848ace27f44c0cb4268981ef1cc00000000000000000000000000000000000000000000000052616e065f6915ebc080a0c497b6e53d7cb78e68c37f6186c8bb9e1b8a55c3e22462163495979b25c2caafa052769811779f438b73159c4cc6a05a889da8c1a16e432c2e37e3415c9a0b9887"],"blockNumber":"0x1361bd3"}
-{"id":1,"jsonrpc":"2.0","result":{"bundleHash":"0xfc53193c7eb836aa28c45f11db07e41429b3b580c632e18ab37d1b92d66df641"}}
+{"bundleHash":"0xfc53193c7eb836aa28c45f11db07e41429b3b580c632e18ab37d1b92d66df641"}
 ```
 
-Raw mode (`-r`) will simply `POST` the entire (line-delimited) contents of standard input to the endpoint.
+Raw mode (`-r`) will simply `POST` the entire (line-delimited) contents of standard input to the endpoint (note that `-m` will be ignored here).
+
+```
+$ mevcat -r https://rpc.beaverbuild.org
+{"jsonrpc":"2.0","id":1,"method":"eth_sendBundle","params":[{"txs":["0x02f8b20181948449bdee618501dcd6500083016b93942dabcea55a12d73191aece59f508b191fb68adac80b844095ea7b300000000000000000000000054e44dbb92dba848ace27f44c0cb4268981ef1cc00000000000000000000000000000000000000000000000052616e065f6915ebc080a0c497b6e53d7cb78e68c37f6186c8bb9e1b8a55c3e22462163495979b25c2caafa052769811779f438b73159c4cc6a05a889da8c1a16e432c2e37e3415c9a0b9887"],"blockNumber":"0x1361bd3"}]}
+{"id":1,"jsonrpc":"2.0","result":{"bundleHash":"0xfc53193c7eb836aa28c45f11db07e41429b3b580c632e18ab37d1b92d66df641"}}
+```
 
 ### Server Mode ###
 
@@ -49,6 +55,7 @@ In server mode, `mevcat` listens on the specified socket for incoming JSON RPC s
 
 ```
 $ RUST_LOG=info mevcat -l 0.0.0.0:3000
- 2025-01-26T02:38:22.423Z INFO  mevcat > Bound to 0.0.0.0:3000
+ 2025-01-27T01:01:35.422Z INFO  mevcat > Bound to 0.0.0.0:3000
+ 2025-01-27T01:01:52.746Z INFO  mevcat > Received bundle: EthSendBundle { txs: [], block_number: 0, min_timestamp: None, max_timestamp: None, reverting_tx_hashes: [], replacement_uuid: None }
 ```
 
