@@ -87,7 +87,7 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 let bundle: EthSendBundle = serde_json::from_str(buf.as_str())?;
                 format!(
                 "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
-                opts.method.unwrap(),
+                opts.method.unwrap_or_default(),
                 serde_json::to_string(&bundle).unwrap(),
             )
             }
@@ -189,10 +189,16 @@ async fn main() -> eyre::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use std::process::{Command, Stdio};
+    use std::{
+        io::{Read, Write},
+        process::{Command, Stdio},
+    };
+
+    use serde_json::Value;
 
     const BEAVERBUILD_URL: &str = "https://rpc.beaverbuild.org";
     const LOCAL_SOCKET: &str = "0.0.0.0:3000";
+    const BEAVER_BUNDLE_EXAMPLE: &str = r#"{"txs":["0x02f8b20181948449bdee618501dcd6500083016b93942dabcea55a12d73191aece59f508b191fb68adac80b844095ea7b300000000000000000000000054e44dbb92dba848ace27f44c0cb4268981ef1cc00000000000000000000000000000000000000000000000052616e065f6915ebc080a0c497b6e53d7cb78e68c37f6186c8bb9e1b8a55c3e22462163495979b25c2caafa052769811779f438b73159c4cc6a05a889da8c1a16e432c2e37e3415c9a0b9887"],"blockNumber":"0x1361bd3"}"#;
 
     #[test]
     fn test_eof() {
@@ -240,6 +246,36 @@ mod tests {
             output.code().unwrap(),
             2,
             "Program should return exit code 2"
+        );
+    }
+
+    #[test]
+    fn test_send_bundle() {
+        let mut child = Command::new("target/debug/mevcat")
+            .arg(BEAVERBUILD_URL)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("Failed to start the program");
+
+        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+        assert!(writeln!(stdin, "{}", BEAVER_BUNDLE_EXAMPLE).is_ok());
+        let _ = stdin;
+
+        let output = child.wait().expect("Failed to wait on child");
+        dbg!(&output);
+
+        assert!(output.success(), "Program should not error");
+
+        let mut output = String::new();
+        assert!(child.stdout.unwrap().read_to_string(&mut output).is_ok());
+        let perhaps_val = serde_json::from_str(&output)
+            .ok()
+            .and_then(|v: Value| v.get("bundleHash").cloned());
+        assert!(
+            perhaps_val.is_some(),
+            "Remote host should return a valid bundle hash object"
         );
     }
 }
