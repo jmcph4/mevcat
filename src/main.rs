@@ -86,7 +86,8 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
             Method::SendBundle => {
                 let bundle: EthSendBundle = serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendBundle\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&bundle).unwrap(),
             )
             }
@@ -94,14 +95,16 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 let cancel: CancelBundleRequest =
                     serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_cancelBundle\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&cancel).unwrap(),
             )
             }
             Method::CallBundle => {
                 let bundle: EthCallBundle = serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_callBundle\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&bundle).unwrap(),
             )
             }
@@ -109,7 +112,8 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 let tx: PrivateTransactionRequest =
                     serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateTransaction\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&tx).unwrap(),
             )
             }
@@ -117,7 +121,8 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 let cancel: CancelPrivateTransactionRequest =
                     serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_cancelPrivateTransaction\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&cancel).unwrap(),
             )
             }
@@ -125,7 +130,8 @@ pub async fn send_rpc(opts: Opts) -> eyre::Result<()> {
                 let tx: PrivateTransactionRequest =
                     serde_json::from_str(buf.as_str())?;
                 format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_sendPrivateRawTransaction\",\"params\":[{}]}}",
+                "{{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"{}\",\"params\":[{}]}}",
+                opts.method.unwrap(),
                 serde_json::to_string(&tx).unwrap(),
             )
             }
