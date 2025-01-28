@@ -251,7 +251,9 @@ async fn main() -> eyre::Result<()> {
 #[cfg(test)]
 mod tests {
     use std::{
+        env,
         io::{Read, Write},
+        path::PathBuf,
         process::{Command, Stdio},
     };
 
@@ -261,9 +263,13 @@ mod tests {
     const LOCAL_SOCKET: &str = "0.0.0.0:3000";
     const BEAVER_BUNDLE_EXAMPLE: &str = r#"{"txs":["0x02f8b20181948449bdee618501dcd6500083016b93942dabcea55a12d73191aece59f508b191fb68adac80b844095ea7b300000000000000000000000054e44dbb92dba848ace27f44c0cb4268981ef1cc00000000000000000000000000000000000000000000000052616e065f6915ebc080a0c497b6e53d7cb78e68c37f6186c8bb9e1b8a55c3e22462163495979b25c2caafa052769811779f438b73159c4cc6a05a889da8c1a16e432c2e37e3415c9a0b9887"],"blockNumber":"0x1361bd3"}"#;
 
+    fn binary_path() -> PathBuf {
+        env::current_dir().unwrap().join("target/debug/mevcat")
+    }
+
     #[test]
     fn test_eof() {
-        let mut child = Command::new("target/debug/mevcat")
+        let mut child = Command::new(binary_path())
             .arg(BEAVERBUILD_URL)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -282,7 +288,7 @@ mod tests {
     #[test]
     fn test_port_with_listen() {
         let some_port: u16 = 8080;
-        let mut child = Command::new("target/debug/mevcat")
+        let mut child = Command::new(binary_path())
             .arg("-l")
             .arg(LOCAL_SOCKET)
             .arg("-p")
@@ -312,7 +318,7 @@ mod tests {
 
     #[test]
     fn test_send_bundle() {
-        let mut child = Command::new("target/debug/mevcat")
+        let mut child = Command::new(binary_path())
             .arg(BEAVERBUILD_URL)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
