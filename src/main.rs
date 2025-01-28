@@ -208,6 +208,16 @@ pub fn router() -> Router<()> {
                 }
             },
         )
+        .route(
+            "eth_cancelPrivateTransaction",
+            |cancel: CancelPrivateTransactionRequest| async move {
+                info!(
+                    "Received cancellation for transaction: {}",
+                    cancel.tx_hash
+                );
+                Ok::<(), &'static str>(())
+            },
+        )
 }
 
 #[tokio::main]
