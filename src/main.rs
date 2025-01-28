@@ -1,7 +1,7 @@
 use std::{fmt::Display, str::FromStr};
 
 use ajj::Router;
-use alloy_primitives::{FixedBytes, TxHash};
+use alloy_primitives::{Bytes, FixedBytes, TxHash};
 use alloy_rpc_types_mev::{
     CancelBundleRequest, CancelPrivateTransactionRequest, EthBundleHash,
     EthCallBundle, EthCallBundleResponse, EthSendBundle,
@@ -203,7 +203,7 @@ pub fn router() -> Router<()> {
                     info!("Received private transaction request: {:?}", bundle);
                     Ok::<TxHash, &'static str>(TxHash::ZERO)
                 } else {
-                    warn!("Received eth_sendBundle with no bundles");
+                    warn!("Received eth_sendPrivateTransaction with no transactions");
                     Err("Must specify exactly one bundle")
                 }
             },
@@ -217,7 +217,15 @@ pub fn router() -> Router<()> {
                 );
                 Ok::<(), &'static str>(())
             },
-        )
+        ).route("eth_sendPrivateRawTransaction", |params: Vec<Bytes>| async move {
+                if let Some(tx) = params.first() {
+                    info!("Received private raw transaction: {:?}", tx);
+                    Ok::<TxHash, &'static str>(TxHash::ZERO)
+                } else {
+                    warn!("Received eth_sendPrivateRawTransaction with no bytecode");
+                    Err("Must specify exactly one transaction")
+                }
+        })
 }
 
 #[tokio::main]
