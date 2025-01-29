@@ -1,6 +1,29 @@
 [package]
-name = "bundled"
+name = "mevcat"
 version = "0.1.0"
 edition = "2021"
 
+authors = ["Jack McPherson <jack@jmcph4.dev>"]
+license = "MIT"
+description = "Lightweight tool for interacting with MEV APIs"
+repository = "https://github.com/jmcph4/mevcat"
+readme = "README.md"
+keywords = ["blockchain", "ethereum", "cryptocurrency"]
+categories = ["cryptography::cryptocurrencies", "development-tools"]
+
 [dependencies]
+ajj = "0.1.2"
+alloy-primitives = "0.8.19"
+alloy-rpc-types-mev = "0.9.2"
+axum = "0.8.1"
+clap = { version = "4.5.27", features = ["derive"] }
+eyre = "0.6.12"
+log = "0.4.25"
+pretty_env_logger = "0.5.0"
+reqwest = { version = "0.12.12", features = ["json"] }
+serde_json = "1.0.138"
+tokio = { version = "1.43.0", features = ["rt-multi-thread"] }
+
+[[bin]]
+name = "mevcat"
+
