@@ -16,14 +16,9 @@ jobs:
             - uses: actions/checkout@v1
 
             - name: Run tests
-              run: cargo test --verbose
-
-            - name: Generate documentation
-              run: cargo doc --verbose
-
-            - name: Run coverage
-              run: cargo install cargo-tarpaulin && cargo tarpaulin --avoid-cfg-tarpaulin # --fail-under 75
-
+              run: |
+                  cargo build
+                  cargo test --verbose
     lint:
         runs-on: ubuntu-latest
         steps:
@@ -34,18 +29,6 @@ jobs:
             
             - name: Run Clippy
               run: cargo clippy --verbose
-
-            - name: Run Cargo check
-              run: cargo check --verbose
-    
-    benchmark:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v1
-
-            - name: Run benchmarks
-              run: cargo bench --verbose
-
     audit:
         runs-on: ubuntu-latest
         steps:
